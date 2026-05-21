@@ -1,5 +1,6 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from starlette.responses import Response
 from apscheduler.schedulers.background import BackgroundScheduler
 from database import engine
 import models
@@ -21,13 +22,37 @@ app = FastAPI(
     version="1.0.0"
 )
 
+SAFE_ORIGINS = [
+    "http://localhost:5173",
+    "https://dashboard.greiv.in",
+    "https://dashboard.bemantis.com",
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "https://tu-dominio.com"],
+    allow_origins=SAFE_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.middleware("http")
+async def allow_private_network_requests(request: Request, call_next):
+    origin = request.headers.get("origin")
+    wants_private_network = (
+        request.headers.get("access-control-request-private-network") == "true"
+    )
+
+    if request.method == "OPTIONS" and origin in SAFE_ORIGINS and wants_private_network:
+        response = Response(status_code=200)
+    else:
+        response = await call_next(request)
+
+    if origin in SAFE_ORIGINS and wants_private_network:
+        response.headers["Access-Control-Allow-Private-Network"] = "true"
+
+    return response
 
 app.include_router(auth_router)
 app.include_router(leads_router)
