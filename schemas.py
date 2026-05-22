@@ -4,12 +4,16 @@ from datetime import datetime
 
 
 class UsuarioCreate(BaseModel):
+    nombre: str
+    empresa: str
     correo: EmailStr
     password: str
 
 
 class UsuarioOut(BaseModel):
     id: int
+    nombre: str
+    empresa: str
     correo: EmailStr
     creado_en: datetime
 

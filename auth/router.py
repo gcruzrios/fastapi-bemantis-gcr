@@ -17,6 +17,8 @@ def register(payload: UsuarioCreate, db: Session = Depends(get_db)):
         raise HTTPException(status_code=400, detail="El correo ya está registrado")
 
     nuevo = models.Usuario(
+        nombre=payload.nombre,
+        empresa=payload.empresa,
         correo=payload.correo,
         password=hash_password(payload.password)
     )

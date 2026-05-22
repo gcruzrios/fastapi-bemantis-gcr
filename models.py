@@ -8,6 +8,8 @@ class Usuario(Base):
     __tablename__ = "usuarios"
 
     id          = Column(Integer, primary_key=True, index=True)
+    nombre      = Column(String, nullable=False)
+    empresa     = Column(String, nullable=False)
     correo      = Column(String, unique=True, index=True, nullable=False)
     password    = Column(String, nullable=False)
     creado_en   = Column(DateTime(timezone=True), server_default=func.now())
