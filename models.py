@@ -8,12 +8,10 @@ class Usuario(Base):
     __tablename__ = "usuarios"
 
     id          = Column(Integer, primary_key=True, index=True)
-    nombre      = Column(String, nullable=False)
-    empresa     = Column(String, nullable=False)
+    nombre      = Column(String, nullable=True)
     correo      = Column(String, unique=True, index=True, nullable=False)
-    password    = Column(String, nullable=False)
+    password    = Column(String, nullable=False)  # Hash bcrypt
     creado_en   = Column(DateTime(timezone=True), server_default=func.now())
-
 
 class Lead(Base):
     __tablename__ = "leads"
@@ -26,19 +24,18 @@ class Lead(Base):
     estado          = Column(String, default="Nuevo")
     fuente          = Column(String)
     notas           = Column(Text)
-    sheets_row_id   = Column(String, unique=True)
+    sheets_row_id   = Column(String, unique=True)   # ID único de la fila en Sheets
     creado_en       = Column(DateTime(timezone=True), server_default=func.now())
     actualizado_en  = Column(DateTime(timezone=True), onupdate=func.now())
 
     interacciones = relationship("Interaccion", back_populates="lead")
-
 
 class Interaccion(Base):
     __tablename__ = "interacciones"
 
     id              = Column(Integer, primary_key=True, index=True)
     lead_id         = Column(Integer, ForeignKey("leads.id"), nullable=True)
-    tipo            = Column(String)
+    tipo            = Column(String)           # email, llamada, WhatsApp, etc.
     contenido       = Column(Text)
     fecha           = Column(String)
     agente          = Column(String)

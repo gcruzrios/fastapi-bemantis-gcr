@@ -1,11 +1,10 @@
 from pydantic import BaseModel, EmailStr
-from typing import Optional, List
+from typing import Optional
 from datetime import datetime
 
 
 class UsuarioCreate(BaseModel):
     nombre: str
-    empresa: str
     correo: EmailStr
     password: str
 
@@ -13,7 +12,6 @@ class UsuarioCreate(BaseModel):
 class UsuarioOut(BaseModel):
     id: int
     nombre: str
-    empresa: str
     correo: EmailStr
     creado_en: datetime
 
@@ -32,30 +30,65 @@ class Token(BaseModel):
     expires_in: int
 
 
-class LeadOut(BaseModel):
-    id: int
+class LeadBase(BaseModel):
     nombre: str
-    correo: Optional[str]
-    telefono: Optional[str]
-    empresa: Optional[str]
-    estado: Optional[str]
-    fuente: Optional[str]
-    notas: Optional[str]
-    sheets_row_id: Optional[str]
+    correo: Optional[EmailStr] = None
+    telefono: Optional[str] = None
+    empresa: Optional[str] = None
+    estado: Optional[str] = None
+    fuente: Optional[str] = None
+    notas: Optional[str] = None
+    sheets_row_id: Optional[str] = None
+
+
+class LeadCreate(LeadBase):
+    pass
+
+
+class LeadUpdate(BaseModel):
+    nombre: Optional[str] = None
+    correo: Optional[EmailStr] = None
+    telefono: Optional[str] = None
+    empresa: Optional[str] = None
+    estado: Optional[str] = None
+    fuente: Optional[str] = None
+    notas: Optional[str] = None
+    sheets_row_id: Optional[str] = None
+
+
+class LeadOut(LeadBase):
+    id: int
     creado_en: datetime
+    actualizado_en: Optional[datetime]
 
     class Config:
         from_attributes = True
 
 
-class InteraccionOut(BaseModel):
+class InteraccionBase(BaseModel):
+    lead_id: Optional[int] = None
+    tipo: Optional[str] = None
+    contenido: Optional[str] = None
+    fecha: Optional[str] = None
+    agente: Optional[str] = None
+    sheets_row_id: Optional[str] = None
+
+
+class InteraccionCreate(InteraccionBase):
+    pass
+
+
+class InteraccionUpdate(BaseModel):
+    lead_id: Optional[int] = None
+    tipo: Optional[str] = None
+    contenido: Optional[str] = None
+    fecha: Optional[str] = None
+    agente: Optional[str] = None
+    sheets_row_id: Optional[str] = None
+
+
+class InteraccionOut(InteraccionBase):
     id: int
-    lead_id: Optional[int]
-    tipo: Optional[str]
-    contenido: Optional[str]
-    fecha: Optional[str]
-    agente: Optional[str]
-    sheets_row_id: Optional[str]
     creado_en: datetime
 
     class Config:
